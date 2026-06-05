@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
   const { darkMode } = useTheme();
+  const { user } = useAuth();
+  console.log("Usuario autenticado:", user);
 
   const [usersCount, setUsersCount] = useState(0);
   const [tasksCount, setTasksCount] = useState(0);
@@ -123,21 +126,41 @@ function Dashboard() {
         >
           <div className="card-body">
 
-            <h4>
-              Bienvenido al Academic Task System
-            </h4>
+  <h4>
+    Bienvenido al Academic Task System
+  </h4>
 
-            <p
-              className={
-                darkMode
-                  ? "text-light"
-                  : "text-muted"
-              }
-            >
-              Sistema de gestión académica
-            </p>
+  <p
+    className={
+      darkMode
+        ? "text-light"
+        : "text-muted"
+    }
+  >
+    Sistema de gestión académica
+  </p>
 
-          </div>
+  <hr />
+
+  <p>
+    <strong>Correo:</strong>{" "}
+    {user?.email}
+  </p>
+
+  <p>
+    <strong>Rol:</strong>{" "}
+    <span
+      className={`badge ${
+        user?.role === "ADMIN"
+          ? "bg-danger"
+          : "bg-primary"
+      }`}
+    >
+      {user?.role}
+    </span>
+  </p>
+
+</div>
         </div>
 
       </div>
