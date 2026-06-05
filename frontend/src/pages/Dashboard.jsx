@@ -15,31 +15,63 @@ function Dashboard() {
   const [completedCount, setCompletedCount] = useState(0);
 
   useEffect(() => {
+
+  if (user) {
     loadStatistics();
-  }, []);
+  }
 
-  const loadStatistics = async () => {
-    try {
-      const usersResponse = await api.get("/users");
-      const tasksResponse = await api.get("/tasks");
+}, [user]);
 
-      const users = usersResponse.data;
-      const tasks = tasksResponse.data;
+ const loadStatistics = async () => {
 
-      setUsersCount(users.length);
-      setTasksCount(tasks.length);
+  if (!user) return;
 
-      setPendingCount(
-        tasks.filter(task => !task.completed).length
+  try {
+
+    const tasksResponse =
+      await api.get("/tasks");
+
+    const tasks =
+      tasksResponse.data;
+
+    setTasksCount(tasks.length);
+
+    setPendingCount(
+      tasks.filter(
+        task => !task.completed
+      ).length
+    );
+
+    setCompletedCount(
+      tasks.filter(
+        task => task.completed
+      ).length
+    );
+
+    if (user.role === "ADMIN") {
+
+      const usersResponse =
+        await api.get("/users");
+
+      setUsersCount(
+        usersResponse.data.length
       );
 
-      setCompletedCount(
-        tasks.filter(task => task.completed).length
-      );
-    } catch (error) {
-      console.error(error);
+    } else {
+
+      setUsersCount(0);
+
     }
-  };
+
+  } catch (error) {
+
+    console.error(
+      "Error cargando estadísticas:",
+      error
+    );
+
+  }
+};
 
   return (
     <>
@@ -55,6 +87,22 @@ function Dashboard() {
 
         <div className="row">
 
+         {user?.role === "ADMIN" && (
+  <div className="col-md-3 mb-3">
+    <div
+      className={`card shadow text-center ${
+        darkMode
+          ? "bg-secondary text-light"
+          : ""
+      }`}
+    >
+      <div className="card-body">
+        <h5>Usuarios</h5>
+        <h1>{usersCount}</h1>
+      </div>
+    </div>
+  </div>
+)}
           <div className="col-md-3 mb-3">
             <div
               className={`card shadow text-center ${
@@ -64,22 +112,11 @@ function Dashboard() {
               }`}
             >
               <div className="card-body">
-                <h5>Usuarios</h5>
-                <h1>{usersCount}</h1>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-3 mb-3">
-            <div
-              className={`card shadow text-center ${
-                darkMode
-                  ? "bg-secondary text-light"
-                  : ""
-              }`}
-            >
-              <div className="card-body">
-                <h5>Tareas</h5>
+                <h5>
+  {user?.role === "ADMIN"
+    ? "Tareas"
+    : "Mis Tareas"}
+</h5>
                 <h1>{tasksCount}</h1>
               </div>
             </div>

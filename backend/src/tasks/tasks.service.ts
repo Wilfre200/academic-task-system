@@ -10,30 +10,39 @@ export class TasksService {
     return this.prisma.task.create({ data });
   }
 
-  findAll() {
+  findAll(user: any) {
+
+  if (user.role === 'ADMIN') {
+
+    return this.prisma.task.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+  }
 
   return this.prisma.task.findMany({
-
-    include: {
-
-      user: {
-
-        select: {
-
-          id: true,
-
-          name: true,
-
-          email: true,
-
-          role: true,
-
-        },
-
-      },
-
+    where: {
+      userId: user.sub,
     },
-
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+    },
   });
 
 }
