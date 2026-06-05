@@ -44,9 +44,11 @@ function Dashboard() {
 
       <div className="container mt-4">
 
-        <h2 className="mb-4">
-          Dashboard
-        </h2>
+      <div>
+
+      <img src="/logoL.png" alt="Logo" width={120} />
+
+      </div>
 
         <div className="row">
 
