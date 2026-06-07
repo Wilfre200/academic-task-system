@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { useTheme } from "../context/ThemeContext";
@@ -14,6 +15,13 @@ function Dashboard() {
   const [tasksCount, setTasksCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
+
+  const progress =
+  tasksCount > 0
+    ? Math.round(
+        (completedCount / tasksCount) * 100
+      )
+    : 0;
 
   useEffect(() => {
 
@@ -168,6 +176,54 @@ function Dashboard() {
           </div>
 
         </div>
+
+        <div className="card shadow mt-4">
+  <div className="card-body">
+
+    <h5>Progreso General</h5>
+
+    <div className="progress">
+      <div
+        className="progress-bar bg-success"
+        role="progressbar"
+        style={{
+          width: `${progress}%`
+        }}
+      >
+        {progress}%
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div className="card shadow mt-4">
+  <div className="card-body">
+
+    <h5>Acciones rápidas</h5>
+
+    <div className="d-flex gap-2">
+
+      <Link
+        to="/tasks"
+        className="btn btn-success"
+      >
+        Nueva tarea
+      </Link>
+
+      {user?.role === "ADMIN" && (
+        <Link
+          to="/users"
+          className="btn btn-primary"
+        >
+          Gestionar usuarios
+        </Link>
+      )}
+
+    </div>
+
+  </div>
+</div>
               
         <div
           className={`card shadow mt-4 ${
