@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
+import Footer from "../components/Footer";
 
 function Dashboard() {
   const { darkMode } = useTheme();
@@ -79,11 +80,25 @@ function Dashboard() {
 
       <div className="container mt-4">
 
-      <div>
+      <div className="text-center mb-4">
+  <img
+    src="/logoL.png"
+    alt="Logo"
+    width={140}
+  />
+</div>
 
-      <img src="/logoL.png" alt="Logo" width={120} />
+<div className="mb-4">
+  <h2>
+    Hola, {user?.name} 👋
+  </h2>
 
-      </div>
+  <p className="text-muted">
+    Bienvenido al Academic Task System
+  </p>
+</div>
+
+       <div className="row mt-4"></div>
 
         <div className="row">
 
@@ -96,7 +111,7 @@ function Dashboard() {
           : ""
       }`}
     >
-      <div className="card-body">
+      <div className="card bg-primary text-white shadow">
         <h5>Usuarios</h5>
         <h1>{usersCount}</h1>
       </div>
@@ -111,7 +126,7 @@ function Dashboard() {
                   : ""
               }`}
             >
-              <div className="card-body">
+              <div className="card bg-info text-white shadow">
                 <h5>
   {user?.role === "ADMIN"
     ? "Tareas"
@@ -130,7 +145,7 @@ function Dashboard() {
                   : ""
               }`}
             >
-              <div className="card-body">
+              <div className="card bg-warning text-white shadow">
                 <h5>Pendientes</h5>
                 <h1>{pendingCount}</h1>
               </div>
@@ -145,7 +160,7 @@ function Dashboard() {
                   : ""
               }`}
             >
-              <div className="card-body">
+              <div className="card bg-success text-white shadow">
                 <h5>Completadas</h5>
                 <h1>{completedCount}</h1>
               </div>
@@ -153,7 +168,7 @@ function Dashboard() {
           </div>
 
         </div>
-
+              
         <div
           className={`card shadow mt-4 ${
             darkMode
@@ -164,18 +179,32 @@ function Dashboard() {
           <div className="card-body">
 
   <h4>
-    Bienvenido al Academic Task System
-  </h4>
+  Bienvenido, {user?.name}
+</h4>
 
   <p
-    className={
-      darkMode
-        ? "text-light"
-        : "text-muted"
+  className={
+    darkMode
+      ? "text-light"
+      : "text-muted"
+  }
+>
+  {user?.role === "ADMIN"
+    ? "Panel de administración del sistema"
+    : "Panel de gestión de tareas académicas"}
+</p>
+
+    <p className="text-muted">
+  {new Date().toLocaleDateString(
+    "es-DO",
+    {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     }
-  >
-    Sistema de gestión académica
-  </p>
+  )}
+</p>
 
   <hr />
 
@@ -185,22 +214,25 @@ function Dashboard() {
   </p>
 
   <p>
-    <strong>Rol:</strong>{" "}
-    <span
-      className={`badge ${
-        user?.role === "ADMIN"
-          ? "bg-danger"
-          : "bg-primary"
-      }`}
-    >
-      {user?.role}
-    </span>
-  </p>
+  <strong>Rol:</strong>{" "}
+  <span
+    className={`badge ${
+      user?.role === "ADMIN"
+        ? "bg-danger"
+        : "bg-primary"
+    }`}
+  >
+    {user?.role === "ADMIN"
+      ? "ADMINISTRADOR"
+      : "USUARIO"}
+  </span>
+</p>
 
 </div>
         </div>
 
       </div>
+      <Footer />
     </>
   );
 }

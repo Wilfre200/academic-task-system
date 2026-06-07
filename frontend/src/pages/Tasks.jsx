@@ -9,15 +9,18 @@ function Tasks() {
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
 
+  // comentarios por tarea
+  const [comments, setComments] = useState({});
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [userId, setUserId] = useState("");
 
   const [editingId, setEditingId] = useState(null);
 
-  
-  // LOAD DATA FUNCTIONS
- 
+  // ======================
+  // LOAD DATA
+  // ======================
   const loadTasks = async () => {
     try {
       const response = await api.get("/tasks");
@@ -36,9 +39,6 @@ function Tasks() {
     }
   };
 
-
-  // EFFECT
-
   useEffect(() => {
     loadTasks();
 
@@ -47,9 +47,9 @@ function Tasks() {
     }
   }, [user]);
 
-  
+  // ======================
   // CRUD TASKS
-  
+  // ======================
   const createTask = async () => {
     try {
       await api.post("/tasks", {
@@ -63,7 +63,6 @@ function Tasks() {
       setUserId("");
 
       loadTasks();
-      alert("Tarea creada");
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +81,6 @@ function Tasks() {
       setUserId("");
 
       loadTasks();
-      alert("Tarea actualizada");
     } catch (error) {
       console.error(error);
     }
@@ -95,7 +93,6 @@ function Tasks() {
       });
 
       loadTasks();
-      alert("Tarea completada");
     } catch (error) {
       console.error(error);
     }
@@ -107,14 +104,34 @@ function Tasks() {
     try {
       await api.delete(`/tasks/${id}`);
       loadTasks();
-      alert("Tarea eliminada");
     } catch (error) {
       console.error(error);
     }
   };
 
-  // UI
+  // ======================
+  // COMENTARIOS
+  // ======================
+  const addComment = async (taskId) => {
+    try {
+      await api.post(`/tasks/${taskId}/comments`, {
+        text: comments[taskId],
+      });
 
+      setComments({
+        ...comments,
+        [taskId]: "",
+      });
+
+      loadTasks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // ======================
+  // UI
+  // ======================
   return (
     <>
       <Navbar />
@@ -226,25 +243,27 @@ function Tasks() {
 
                       <td>
                         {task.createdAt !== task.updatedAt
-                          ? new Date(task.updatedAt).toLocaleDateString(
-                              "es-DO"
-                            )
+                          ? new Date(task.updatedAt).toLocaleDateString("es-DO")
                           : "Sin actualizar"}
                       </td>
 
                       <td>
-                        <button
-                          className="btn btn-primary btn-sm me-2"
-                          onClick={() => {
-                            setEditingId(task.id);
-                            setTitle(task.title);
-                            setDescription(task.description);
-                            setUserId(task.userId);
-                          }}
-                        >
-                          Editar
-                        </button>
+                        {/* EDITAR SOLO ADMIN */}
+                        {user?.role === "ADMIN" && (
+                          <button
+                            className="btn btn-primary btn-sm me-2"
+                            onClick={() => {
+                              setEditingId(task.id);
+                              setTitle(task.title);
+                              setDescription(task.description);
+                              setUserId(task.userId);
+                            }}
+                          >
+                            Editar
+                          </button>
+                        )}
 
+                        {/* COMPLETAR TODOS */}
                         {!task.completed && (
                           <button
                             className="btn btn-success btn-sm me-2"
@@ -254,12 +273,48 @@ function Tasks() {
                           </button>
                         )}
 
+                        {/* ELIMINAR SOLO ADMIN */}
+                        {user?.role === "ADMIN" && (
+                          <button
+                            className="btn btn-danger btn-sm me-2"
+                            onClick={() => deleteTask(task.id)}
+                          >
+                            Eliminar
+                          </button>
+                        )}
+
+                        {/* INPUT COMENTARIO POR TAREA */}
+                        <input
+                          className="form-control mb-2"
+                          placeholder="Escribe un comentario"
+                          value={comments[task.id] || ""}
+                          onChange={(e) =>
+                            setComments({
+                              ...comments,
+                              [task.id]: e.target.value,
+                            })
+                          }
+                        />
+
                         <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => deleteTask(task.id)}
+                          className="btn btn-secondary btn-sm me-2"
+                          onClick={() => addComment(task.id)}
                         >
-                          Eliminar
+                          Comentar
                         </button>
+
+                        {/* MOSTRAR COMENTARIOS */}
+                        <div className="mt-2">
+                          {task.comments?.map((c) => (
+                            <div
+                              key={c.id}
+                              className="border rounded p-1 mb-1"
+                            >
+                              <strong>{c.user?.name}:</strong>{" "}
+                              <span>{c.text}</span>
+                            </div>
+                          ))}
+                        </div>
                       </td>
                     </tr>
                   ))}
