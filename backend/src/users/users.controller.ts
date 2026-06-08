@@ -24,16 +24,21 @@ export class UsersController {
     private usersService: UsersService,
   ) {}
 
-  @Post()
-  @Roles('ADMIN')
-  @UseGuards(JwtGuard, RolesGuard)
-  async create(@Body() body: any) {
+ @Post()
+@Roles('ADMIN')
+@UseGuards(JwtGuard, RolesGuard)
+async create(@Body() body: any) {
 
-    const hashedPassword =
-      await bcrypt.hash(
-        body.password,
-        10,
-      );
+  const hashedPassword =
+    await bcrypt.hash(
+      body.password,
+      10,
+    );
+
+  return this.usersService.create({
+    ...body,
+    password: hashedPassword,
+  });
 
     return this.usersService.create({
       ...body,
