@@ -112,22 +112,25 @@ function Tasks() {
   // ======================
   // COMENTARIOS
   // ======================
-  const addComment = async (taskId) => {
-    try {
-      await api.post(`/tasks/${taskId}/comments`, {
-        text: comments[taskId],
-      });
+ const addComment = async (taskId) => {
+  try {
 
-      setComments({
-        ...comments,
-        [taskId]: "",
-      });
+    await api.post("/comments", {
+      content: comments[taskId],
+      taskId,
+    });
 
-      loadTasks();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    setComments({
+      ...comments,
+      [taskId]: "",
+    });
+
+    loadTasks();
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   // ======================
   // UI
@@ -306,14 +309,25 @@ function Tasks() {
                         {/* MOSTRAR COMENTARIOS */}
                         <div className="mt-2">
                           {task.comments?.map((c) => (
-                            <div
-                              key={c.id}
-                              className="border rounded p-1 mb-1"
-                            >
-                              <strong>{c.user?.name}:</strong>{" "}
-                              <span>{c.text}</span>
-                            </div>
-                          ))}
+  <div
+    key={c.id}
+    className="border rounded p-2 mb-2 bg-light"
+  >
+
+    <strong>
+      {c.user?.name}
+    </strong>
+
+    <small className="text-muted ms-2">
+      {new Date(c.createdAt).toLocaleString()}
+    </small>
+
+    <br />
+
+    {c.content}
+
+  </div>
+))}
                         </div>
                       </td>
                     </tr>

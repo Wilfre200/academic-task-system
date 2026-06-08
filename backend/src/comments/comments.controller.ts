@@ -39,6 +39,6 @@ export class CommentsController {
   ) {
     return this.commentsService.findByTask(
       +taskId,
-    );  
+    );
   }
 }

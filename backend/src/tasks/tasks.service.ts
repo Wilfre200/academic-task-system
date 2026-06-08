@@ -10,12 +10,14 @@ export class TasksService {
     return this.prisma.task.create({ data });
   }
 
-  findAll(user: any) {
+ findAll(user: any) {
 
   if (user.role === 'ADMIN') {
 
     return this.prisma.task.findMany({
+
       include: {
+
         user: {
           select: {
             id: true,
@@ -24,16 +26,40 @@ export class TasksService {
             role: true,
           },
         },
+
+        comments: {
+
+          include: {
+
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+
+          },
+
+          orderBy: {
+            createdAt: 'desc',
+          },
+
+        },
+
       },
+
     });
 
   }
 
   return this.prisma.task.findMany({
+
     where: {
       userId: user.sub,
     },
+
     include: {
+
       user: {
         select: {
           id: true,
@@ -42,7 +68,28 @@ export class TasksService {
           role: true,
         },
       },
+
+      comments: {
+
+        include: {
+
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+
+        },
+
+        orderBy: {
+          createdAt: 'desc',
+        },
+
+      },
+
     },
+
   });
 
 }

@@ -25,20 +25,20 @@ export class TasksController {
     return this.tasksService.create(body);
   }
 
-  @UseGuards(JwtGuard)
   @Get()
+  @UseGuards(JwtGuard)
   findAll(@Req() req: any) {
     return this.tasksService.findAll(req.user);
   }
 
-  @UseGuards(JwtGuard)
   @Get(':id')
+  @UseGuards(JwtGuard)
   findOne(@Param('id') id: string) {
     return this.tasksService.findOne(+id);
   }
 
-  @UseGuards(JwtGuard)
   @Put(':id')
+  @UseGuards(JwtGuard)
   update(
     @Param('id') id: string,
     @Body() body: any,
@@ -46,8 +46,8 @@ export class TasksController {
     return this.tasksService.update(+id, body);
   }
 
-  @UseGuards(JwtGuard)
   @Delete(':id')
+  @UseGuards(JwtGuard)
   delete(@Param('id') id: string) {
     return this.tasksService.delete(+id);
   }
