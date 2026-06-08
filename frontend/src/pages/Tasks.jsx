@@ -10,7 +10,11 @@ function Tasks() {
   const [tasks, setTasks] = useState([]);
 
   // comentarios por tarea
-  const [comments, setComments] = useState({});
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  const [taskComments, setTaskComments] = useState([]);
+
+  const [newComment, setNewComment] = useState("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -18,9 +22,37 @@ function Tasks() {
 
   const [editingId, setEditingId] = useState(null);
 
-  // ======================
   // LOAD DATA
-  // ======================
+
+  const loadComments = async (taskId) => {
+
+  try {
+
+    const response =
+      await api.get(
+        `/comments/task/${taskId}`
+      );
+
+    setTaskComments(
+      response.data
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+};
+
+const openComments = async (task) => {
+
+  setSelectedTask(task);
+
+  await loadComments(task.id);
+
+};
+
   const loadTasks = async () => {
     try {
       const response = await api.get("/tasks");
@@ -112,24 +144,30 @@ function Tasks() {
   // ======================
   // COMENTARIOS
   // ======================
- const addComment = async (taskId) => {
+ const addComment = async () => {
+
   try {
 
     await api.post("/comments", {
-      content: comments[taskId],
-      taskId,
+
+      content: newComment,
+
+      taskId: selectedTask.id,
+
     });
 
-    setComments({
-      ...comments,
-      [taskId]: "",
-    });
+    setNewComment("");
 
-    loadTasks();
+    await loadComments(
+      selectedTask.id
+    );
 
   } catch (error) {
+
     console.error(error);
+
   }
+
 };
 
   // ======================
@@ -286,49 +324,21 @@ function Tasks() {
                           </button>
                         )}
 
-                        {/* INPUT COMENTARIO POR TAREA */}
-                        <input
-                          className="form-control mb-2"
-                          placeholder="Escribe un comentario"
-                          value={comments[task.id] || ""}
-                          onChange={(e) =>
-                            setComments({
-                              ...comments,
-                              [task.id]: e.target.value,
-                            })
-                          }
-                        />
-
                         <button
-                          className="btn btn-secondary btn-sm me-2"
-                          onClick={() => addComment(task.id)}
-                        >
-                          Comentar
-                        </button>
+  className="btn btn-info btn-sm"
+  data-bs-toggle="modal"
+  data-bs-target="#commentsModal"
+  onClick={() => openComments(task)}
+>
+  💬 Comentarios
 
-                        {/* MOSTRAR COMENTARIOS */}
-                        <div className="mt-2">
-                          {task.comments?.map((c) => (
-  <div
-    key={c.id}
-    className="border rounded p-2 mb-2 bg-light"
-  >
+  {task.comments?.length > 0 && (
+    <span className="badge bg-danger ms-2">
+      {task.comments.length}
+    </span>
+  )}
+</button>
 
-    <strong>
-      {c.user?.name}
-    </strong>
-
-    <small className="text-muted ms-2">
-      {new Date(c.createdAt).toLocaleString()}
-    </small>
-
-    <br />
-
-    {c.content}
-
-  </div>
-))}
-                        </div>
                       </td>
                     </tr>
                   ))}
@@ -338,6 +348,102 @@ function Tasks() {
           </div>
         </div>
       </div>
+
+                  <div
+  className="modal fade"
+  id="commentsModal"
+  tabIndex="-1"
+>
+  <div className="modal-dialog modal-lg">
+    <div className="modal-content">
+
+      <div className="modal-header">
+        <h5 className="modal-title">
+
+          Comentarios
+
+          {selectedTask &&
+            ` - ${selectedTask.title}`}
+
+        </h5>
+
+        <button
+          type="button"
+          className="btn-close"
+          data-bs-dismiss="modal"
+        />
+      </div>
+
+      <div className="modal-body">
+
+        {taskComments.length > 0 ? (
+
+          taskComments.map(comment => (
+
+            <div
+              key={comment.id}
+              className="border rounded p-3 mb-2"
+            >
+
+              <strong>
+                {comment.user?.name}
+              </strong>
+
+              <small className="text-muted ms-2">
+
+                {new Date(
+                  comment.createdAt
+                ).toLocaleString("es-DO")}
+
+              </small>
+
+              <hr className="my-2" />
+
+              {comment.content}
+
+            </div>
+
+          ))
+
+        ) : (
+
+          <p>
+            No hay comentarios para esta tarea.
+          </p>
+
+        )}
+
+        <hr />
+
+        <textarea
+          className="form-control"
+          rows="3"
+          placeholder="Escribe un comentario..."
+          value={newComment}
+          onChange={(e) =>
+            setNewComment(
+              e.target.value
+            )
+          }
+        />
+
+      </div>
+
+      <div className="modal-footer">
+
+        <button
+          className="btn btn-primary"
+          onClick={addComment}
+        >
+          Agregar comentario
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
     </>
   );
 }
