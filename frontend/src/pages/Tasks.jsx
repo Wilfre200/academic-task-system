@@ -359,57 +359,66 @@ const openComments = async (task) => {
                       </td>
 
                       <td>
-                        {/* EDITAR SOLO ADMIN */}
-                        {user?.role === "ADMIN" && (
-                          <button
-                            className="btn btn-primary btn-sm me-2"
-                            onClick={() => {
-                              setEditingId(task.id);
-                              setTitle(task.title);
-                              setDescription(task.description);
-                              setUserId(task.userId);
-                            }}
-                          >
-                            Editar
-                          </button>
-                        )}
 
-                        {/* COMPLETAR TODOS */}
-                        {!task.completed && (
-                          <button
-                            className="btn btn-success btn-sm me-2"
-                            onClick={() => completeTask(task.id)}
-                          >
-                            Completar
-                          </button>
-                        )}
+  {/* Primera fila */}
+  <div className="d-grid gap-1">
 
-                        {/* ELIMINAR SOLO ADMIN */}
-                        {user?.role === "ADMIN" && (
-                          <button
-                            className="btn btn-danger btn-sm me-2"
-                            onClick={() => deleteTask(task.id)}
-                          >
-                            Eliminar
-                          </button>
-                        )}
+    {user?.role === "ADMIN" && (
+      <button
+        className="btn btn-primary btn-sm"
+        onClick={() => {
+          setEditingId(task.id);
+          setTitle(task.title);
+          setDescription(task.description);
+          setUserId(task.userId);
+        }}
+      >
+        ✏️ Editar
+      </button>
+    )}
 
-                        <button
-  className="btn btn-info btn-sm"
-  data-bs-toggle="modal"
-  data-bs-target="#commentsModal"
-  onClick={() => openComments(task)}
->
-  💬 Comentarios
+    {!task.completed && (
+      <button
+        className="btn btn-success btn-sm"
+        onClick={() => completeTask(task.id)}
+      >
+        ✓ Completar
+      </button>
+    )}
 
-  {task.comments?.length > 0 && (
-    <span className="badge bg-danger ms-2">
-      {task.comments.length}
-    </span>
-  )}
-</button>
+    {user?.role === "ADMIN" && (
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={() => deleteTask(task.id)}
+      >
+        🗑 Eliminar
+      </button>
+    )}
 
-                      </td>
+  </div>
+
+  {/* Segunda fila */}
+  <div>
+
+    <button
+      className="btn btn-info btn-sm w-100"
+      data-bs-toggle="modal"
+      data-bs-target="#commentsModal"
+      onClick={() => openComments(task)}
+    >
+      💬 Comentarios
+
+      {task.comments?.length > 0 && (
+        <span className="badge bg-danger ms-2">
+          {task.comments.length}
+        </span>
+      )}
+
+    </button>
+
+  </div>
+
+</td>
                     </tr>
                   ))}
                 </tbody>
