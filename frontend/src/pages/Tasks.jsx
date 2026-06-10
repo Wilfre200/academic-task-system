@@ -22,7 +22,77 @@ function Tasks() {
 
   const [editingId, setEditingId] = useState(null);
 
+  const [editingCommentId,
+  setEditingCommentId] =
+  useState(null);
+
+const [editingContent,
+  setEditingContent] =
+  useState("");
+
   // LOAD DATA
+
+  const updateComment = async () => {
+
+  try {
+
+    await api.put(
+
+      `/comments/${editingCommentId}`,
+
+      {
+        content:
+          editingContent,
+      }
+
+    );
+
+    setEditingCommentId(
+      null
+    );
+
+    setEditingContent("");
+
+    loadComments(
+      selectedTask.id
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+};
+
+const deleteComment = async (
+  commentId
+) => {
+
+  if (
+    !window.confirm(
+      "¿Eliminar comentario?"
+    )
+  )
+    return;
+
+  try {
+
+    await api.delete(
+      `/comments/${commentId}`
+    );
+
+    loadComments(
+      selectedTask.id
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+};
 
   const loadComments = async (taskId) => {
 
@@ -170,9 +240,9 @@ const openComments = async (task) => {
 
 };
 
-  // ======================
+ 
   // UI
-  // ======================
+ 
   return (
     <>
       <Navbar />
@@ -381,27 +451,109 @@ const openComments = async (task) => {
           taskComments.map(comment => (
 
             <div
-              key={comment.id}
-              className="border rounded p-3 mb-2"
-            >
+  key={comment.id}
+  className="border rounded p-3 mb-2"
+>
 
-              <strong>
-                {comment.user?.name}
-              </strong>
+  <strong>
+    {comment.user?.name}
+  </strong>
 
-              <small className="text-muted ms-2">
+  <small className="text-muted ms-2">
 
-                {new Date(
-                  comment.createdAt
-                ).toLocaleString("es-DO")}
+    {new Date(
+      comment.createdAt
+    ).toLocaleString("es-DO")}
 
-              </small>
+  </small>
 
-              <hr className="my-2" />
+  <hr />
 
-              {comment.content}
+  {editingCommentId ===
+  comment.id ? (
 
-            </div>
+    <>
+
+      <textarea
+        className="form-control"
+        value={
+          editingContent
+        }
+        onChange={(e) =>
+          setEditingContent(
+            e.target.value
+          )
+        }
+      />
+
+      <button
+        className="btn btn-success btn-sm mt-2 me-2"
+        onClick={
+          updateComment
+        }
+      >
+        Guardar
+      </button>
+
+      <button
+        className="btn btn-secondary btn-sm mt-2"
+        onClick={() =>
+          setEditingCommentId(
+            null
+          )
+        }
+      >
+        Cancelar
+      </button>
+
+    </>
+
+  ) : (
+
+    <>
+      <p>
+        {comment.content}
+      </p>
+
+      {(user?.id ===
+        comment.userId ||
+        user?.role ===
+          "ADMIN") && (
+        <>
+          <button
+            className="btn btn-warning btn-sm me-2"
+            onClick={() => {
+
+              setEditingCommentId(
+                comment.id
+              );
+
+              setEditingContent(
+                comment.content
+              );
+
+            }}
+          >
+            Editar
+          </button>
+
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() =>
+              deleteComment(
+                comment.id
+              )
+            }
+          >
+            Eliminar
+          </button>
+        </>
+      )}
+    </>
+
+  )}
+
+</div>
 
           ))
 

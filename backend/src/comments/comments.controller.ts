@@ -10,6 +10,7 @@ import {
 
 import { CommentsService } from './comments.service';
 import { JwtGuard } from '../auth/guards/jwt.guard';
+import { Put, Delete } from '@nestjs/common';
 
 @Controller('comments')
 export class CommentsController {
@@ -41,4 +42,31 @@ export class CommentsController {
       +taskId,
     );
   }
+
+  @UseGuards(JwtGuard)
+@Put(':id')
+update(
+  @Param('id') id: string,
+  @Body() body: any,
+) {
+
+  return this.commentsService.update(
+    +id,
+    body.content,
+  );
+
+}
+
+@UseGuards(JwtGuard)
+@Delete(':id')
+delete(
+  @Param('id') id: string,
+) {
+
+  return this.commentsService.delete(
+    +id,
+  );
+
+}
+
 }

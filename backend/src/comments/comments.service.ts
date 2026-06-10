@@ -41,4 +41,33 @@ export class CommentsService {
       },
     });
   }
+
+  update(id: number, content: string) {
+
+  return this.prisma.comment.update({
+
+    where: {
+      id,
+    },
+
+    data: {
+      content,
+    },
+
+  });
+
+}
+
+delete(id: number) {
+
+  return this.prisma.comment.delete({
+
+    where: {
+      id,
+    },
+
+  });
+
+}
+
 }
