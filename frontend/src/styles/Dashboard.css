@@ -1,0 +1,42 @@
+.stat-card {
+    border: none;
+    border-radius: 18px;
+    text-align: center;
+    color: white;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.8s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, .2);
+}
+
+.users-card {
+    background: linear-gradient( 135deg, #0d6efd, #3d8bfd);
+}
+
+.tasks-card {
+    background: linear-gradient( 135deg, #6f42c1, #8b5cf6);
+}
+
+.pending-card {
+    background: linear-gradient( 135deg, #fd7e14, #ffb020);
+}
+
+.completed-card {
+    background: linear-gradient( 135deg, #198754, #20c997);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -5,6 +5,8 @@ import api from "../services/api";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import Footer from "../components/Footer";
+import {FaUsers, FaTasks, FaClock, FaCheckCircle} from "react-icons/fa";
+import "../styles/Dashboard.css";
 
 function Dashboard() {
   const { darkMode } = useTheme();
@@ -112,68 +114,70 @@ function Dashboard() {
 
          {user?.role === "ADMIN" && (
   <div className="col-md-3 mb-3">
-    <div
-      className={`card shadow text-center ${
-        darkMode
-          ? "bg-secondary text-light"
-          : ""
-      }`}
-    >
-      <div className="card bg-primary text-white shadow">
-        <h5>Usuarios</h5>
-        <h1>{usersCount}</h1>
-      </div>
+  <div className="card stat-card users-card">
+    <div className="card-body">
+
+      <FaUsers size={40} />
+
+      <h5 className="mt-3">
+        Usuarios
+      </h5>
+
+      <h1>{usersCount}</h1>
+
     </div>
   </div>
+</div>
 )}
           <div className="col-md-3 mb-3">
-            <div
-              className={`card shadow text-center ${
-                darkMode
-                  ? "bg-secondary text-light"
-                  : ""
-              }`}
-            >
-              <div className="card bg-info text-white shadow">
-                <h5>
-  {user?.role === "ADMIN"
-    ? "Tareas"
-    : "Mis Tareas"}
-</h5>
-                <h1>{tasksCount}</h1>
-              </div>
-            </div>
-          </div>
+  <div className="card stat-card tasks-card">
+    <div className="card-body">
+
+      <FaTasks size={40} />
+
+      <h5 className="mt-3">
+        {user?.role === "ADMIN"
+          ? "Tareas"
+          : "Mis Tareas"}
+      </h5>
+
+      <h1>{tasksCount}</h1>
+
+    </div>
+  </div>
+</div>
 
           <div className="col-md-3 mb-3">
-            <div
-              className={`card shadow text-center ${
-                darkMode
-                  ? "bg-secondary text-light"
-                  : ""
-              }`}
-            >
-              <div className="card bg-warning text-white shadow">
-                <h5>Pendientes</h5>
-                <h1>{pendingCount}</h1>
-              </div>
-            </div>
-          </div>
+  <div className="card stat-card pending-card">
+    <div className="card-body">
+
+      <FaClock size={40} />
+
+      <h5 className="mt-3">
+        Pendientes
+      </h5>
+
+      <h1>{pendingCount}</h1>
+
+    </div>
+  </div>
+</div>
 
           <div className="col-md-3 mb-3">
-            <div
-              className={`card shadow text-center ${
-                darkMode
-                  ? "bg-secondary text-light"
-                  : ""
-              }`}
-            >
-              <div className="card bg-success text-white shadow">
-                <h5>Completadas</h5>
-                <h1>{completedCount}</h1>
-              </div>
-            </div>
-          </div>
+  <div className="card stat-card completed-card">
+    <div className="card-body">
+
+      <FaCheckCircle size={40} />
+
+      <h5 className="mt-3">
+        Completadas
+      </h5>
+
+      <h1>{completedCount}</h1>
+
+    </div>
+  </div>
+</div>
 
         </div>
 

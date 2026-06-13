@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import "../styles/CommentsModal.css";
 
 function Tasks() {
   const { user } = useAuth();
@@ -455,80 +456,42 @@ const openComments = async (task) => {
 
       <div className="modal-body">
 
+  <div className="comments-container">
+
         {taskComments.length > 0 ? (
 
-          taskComments.map(comment => (
+          taskComments.map((comment) => (
 
-            <div
-  key={comment.id}
-  className="border rounded p-3 mb-2"
->
+  <div
+    key={comment.id}
+    className={`comment-message ${
+      comment.userId === user?.id
+        ? "mine"
+        : "other"
+    }`}
+  >
 
-  <strong>
-    {comment.user?.name}
-  </strong>
+    <div className="comment-bubble">
 
-  <small className="text-muted ms-2">
+      <div className="comment-user">
+        {comment.user?.name}
+      </div>
 
-    {new Date(
-      comment.createdAt
-    ).toLocaleString("es-DO")}
+      <div className="comment-date">
+        {new Date(
+          comment.createdAt
+        ).toLocaleString("es-DO")}
+      </div>
 
-  </small>
-
-  <hr />
-
-  {editingCommentId ===
-  comment.id ? (
-
-    <>
-
-      <textarea
-        className="form-control"
-        value={
-          editingContent
-        }
-        onChange={(e) =>
-          setEditingContent(
-            e.target.value
-          )
-        }
-      />
-
-      <button
-        className="btn btn-success btn-sm mt-2 me-2"
-        onClick={
-          updateComment
-        }
-      >
-        Guardar
-      </button>
-
-      <button
-        className="btn btn-secondary btn-sm mt-2"
-        onClick={() =>
-          setEditingCommentId(
-            null
-          )
-        }
-      >
-        Cancelar
-      </button>
-
-    </>
-
-  ) : (
-
-    <>
-      <p>
+      <div className="comment-text">
         {comment.content}
-      </p>
+      </div>
 
-      {(user?.id ===
-        comment.userId ||
-        user?.role ===
-          "ADMIN") && (
-        <>
+      {(user?.id === comment.userId ||
+        user?.role === "ADMIN") && (
+
+        <div className="mt-2">
+
           <button
             className="btn btn-warning btn-sm me-2"
             onClick={() => {
@@ -543,7 +506,7 @@ const openComments = async (task) => {
 
             }}
           >
-            Editar
+            ✏️
           </button>
 
           <button
@@ -554,17 +517,18 @@ const openComments = async (task) => {
               )
             }
           >
-            Eliminar
+            🗑️
           </button>
-        </>
+
+        </div>
+
       )}
-    </>
 
-  )}
+    </div>
 
-</div>
+  </div>
 
-          ))
+))
 
         ) : (
 
@@ -573,10 +537,13 @@ const openComments = async (task) => {
           </p>
 
         )}
+  </div>
 
         <hr />
 
-        <textarea
+        <div className="comment-input">
+
+<textarea
           className="form-control"
           rows="3"
           placeholder="Escribe un comentario..."
@@ -598,6 +565,7 @@ const openComments = async (task) => {
         >
           Agregar comentario
         </button>
+        </div>
 
       </div>
 
